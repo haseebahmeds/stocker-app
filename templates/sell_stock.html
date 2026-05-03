@@ -1,0 +1,119 @@
+<!-- templates/service-details-5.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Our Services - Stocker</title>
+
+  <!-- Favicons -->
+  <link href="{{ url_for('static', filename='img/logo stocker.png') }}" rel="icon" />
+
+  <!-- Fonts and CSS -->
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet" />
+
+
+
+</head>
+<body>
+
+  <header id="header" class="header d-flex align-items-center fixed-top">
+    <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+
+      <a class="logo d-flex align-items-center me-auto me-lg-0">
+        <img src="{{ url_for('static', filename='img/logo stocker.png') }}" alt="">
+        <h1 class="sitename">STOCKER</h1>
+        <span>.</span>
+      </a>
+
+      <nav id="navmenu" class="navmenu d-flex align-items-center">
+        <ul class="d-flex align-items-center mb-0">
+          <li><a href="{{ url_for('dashboard_trader') }}">Dashboard</a></li>
+          <li><a href="{{ url_for('service04') }}">Stocks</a></li>
+        </ul>
+        <a href="{{ url_for('logout') }}" class="btn btn-danger ms-4 px-4 py-2 rounded">Logout</a>  
+      </nav>
+    </div>
+  </header>
+
+  
+  {% block content %}
+<div class="container py-5" style="margin-top: 100px;">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2>Sell Stock: {{ stock.symbol }}</h2>
+            <p>{{ stock.name }} - Current Price: ₹{{ stock.price }}</p>
+            <p>You currently own: {{ portfolio_entry.quantity }} shares (avg. price: ₹{{ portfolio_entry.average_price }})</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card shadow">
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="form-group mb-3">
+                            <label for="quantity">Quantity to Sell</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity" min="1" max="{{ portfolio_entry.quantity }}" required>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label>Estimated Proceeds:</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">₹</span>
+                                </div>
+                                <input type="text" class="form-control" id="total" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label>Estimated Profit/Loss:</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">₹</span>
+                                </div>
+                                <input type="text" class="form-control" id="profitLoss" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger">Confirm Sale</button>
+                            <a href="{{ url_for('service04') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+  document.getElementById('quantity').addEventListener('input', function() {
+      const quantity = parseInt(this.value) || 0;
+      const currentPrice = parseFloat("{{ stock.price }}");
+      const avgPrice = parseFloat("{{ portfolio_entry.average_price }}");
+      
+      const total = (quantity * currentPrice).toFixed(2);
+      document.getElementById('total').value = total;
+      
+      const profitLoss = (quantity * (currentPrice - avgPrice)).toFixed(2);
+      const profitLossField = document.getElementById('profitLoss');
+      profitLossField.value = profitLoss;
+      
+      if (parseFloat(profitLoss) >= 0) {
+          profitLossField.classList.remove('text-danger');
+          profitLossField.classList.add('text-success');
+      } else {
+          profitLossField.classList.remove('text-success');
+          profitLossField.classList.add('text-danger');
+      }
+  });
+</script>
+{% endblock %}
+
+  
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!-- templates/service-details-4.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Browse Stocks - Stocker</title>
+
+  <!-- Favicons -->
+  <link href="{{ url_for('static', filename='img/logo stocker.png') }}" rel="icon" />
+
+  <!-- Fonts and CSS -->
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet" />
+  
+  <style>
+    /* Additional custom styles */
+    .content-section {
+      margin-top: 100px; /* Add margin to prevent overlap with header */
+    }
+    .curved-container {
+      background-color: #f8f9fa; /* Light background */
+      border-radius: 20px; /* Curved corners */
+      padding: 30px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .logout-button {
+      margin-left: auto; /* Push it to right */
+    }
+    .stock-card {
+      transition: transform 0.3s ease;
+    }
+    .stock-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    .sector-tag {
+      font-size: 0.8rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.25rem;
+      background-color: #e9ecef;
+    }
+    .stock-price-up {
+      color: green;
+      font-weight: bold;
+    }
+    .stock-price-down {
+      color: red;
+      font-weight: bold;
+    }
+    .search-bar {
+      border-radius: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+
+<header id="header" class="header d-flex align-items-center fixed-top">
+  <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+
+    <a class="logo d-flex align-items-center me-auto me-lg-0">
+      <img src="{{ url_for('static', filename='img/logo stocker.png') }}" alt="">
+      <h1 class="sitename">STOCKER</h1>
+      <span>.</span>
+    </a>
+
+    <nav id="navmenu" class="navmenu d-flex align-items-center">
+      <ul class="d-flex align-items-center mb-0">
+        <li><a href="{{ url_for('dashboard_trader') }}">Dashboard</a></li>
+        <li><a href="{{ url_for('service05') }}">My Portfolio</a></li>
+      </ul>
+      <a href="{{ url_for('logout') }}" class="btn btn-danger ms-4 px-4 py-2 rounded">Logout</a>  
+    </nav>
+    <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+  </div>
+</header>
+
+<main class="container content-section">
+  {% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2>Available Stocks</h2>
+            <p>Browse available stocks and make transactions</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Symbol</th>
+                                    <th>Name</th>
+                                    <th>Price</th>
+                                    <th>Sector</th>
+                                    <th>Industry</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for stock in stocks %}
+                                {% set owns_stock = false %}
+                                {% for item in user.portfolio %}
+                                    {% if item.stock_id == stock.id and item.quantity > 0 %}
+                                        {% set owns_stock = true %}
+                                    {% endif %}
+                                {% endfor %}
+                                <tr>
+                                    <td>{{ stock.symbol }}</td>
+                                    <td>{{ stock.name }}</td>
+                                    <td>₹{{ stock.price }}</td>
+                                    <td>{{ stock.sector }}</td>
+                                    <td>{{ stock.industry }}</td>
+                                    <td>
+                                        <a href="{{ url_for('buy_stock', stock_id=stock.id) }}" class="btn btn-sm btn-success">Buy</a>
+                                        {% if owns_stock %}
+                                            <a href="{{ url_for('sell_stock', stock_id=stock.id) }}" class="btn btn-sm btn-danger">Sell</a>
+                                        {% else %}
+                                            <a href="#" class="btn btn-sm btn-danger" onclick="checkOwnership('{{ stock.symbol }}'); return false;">Sell</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function checkOwnership(symbol) {
+        alert("You don't own any shares of " + symbol + ". Please purchase this stock before attempting to sell.");
+    }
+</script>
+{% endblock %}
+
+</main>
+
+</body>
+</html>
