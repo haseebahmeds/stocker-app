@@ -1,0 +1,122 @@
+<!-- Chat Widget HTML -->
+<div id="chat-widget" class="chat-widget position-fixed shadow-lg d-flex flex-column" style="bottom: 20px; right: 20px; width: 350px; height: 450px; background-color: #fff; border-radius: 12px; z-index: 1050; display: none; overflow: hidden; transform: scale(0); transform-origin: bottom right; transition: transform 0.3s ease;">
+  <!-- Chat Header -->
+  <div class="chat-header text-white p-3 d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #0d9488, #14b8a6);">
+    <h6 class="mb-0 fw-bold"><i class="bi bi-robot me-2"></i>Trading Dashboard Assistant</h6>
+    <button type="button" class="btn-close btn-close-white" aria-label="Close" onclick="toggleChat()"></button>
+  </div>
+  
+  <!-- Chat Messages Body -->
+  <div id="chat-messages" class="chat-messages flex-grow-1 p-3" style="overflow-y: auto; background-color: #f8fafc;">
+    <!-- Welcome Message -->
+    <div class="message bot-message d-flex align-items-start mb-3">
+      <div class="bg-white p-2 rounded-3 shadow-sm" style="max-width: 85%; font-size: 0.9rem; border: 1px solid #e2e8f0; color: #334155;">
+        Hello! I'm your Trading Dashboard Assistant. Ask me about trading, portfolios, or how to use the app.
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Input Footer -->
+  <div class="chat-footer p-2 bg-white border-top">
+    <div class="input-group">
+      <input type="text" id="chat-input" class="form-control border-0 bg-light rounded-pill px-3" placeholder="Type a question..." autocomplete="off" onkeypress="handleKeyPress(event)">
+      <button class="btn text-white rounded-circle ms-2 d-flex align-items-center justify-content-center" type="button" style="background-color: #0d9488; width: 40px; height: 40px;" onclick="sendMessage()">
+        <i class="bi bi-send-fill"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Chat Toggle Button -->
+<button id="chat-toggle-btn" class="btn text-white position-fixed shadow-lg rounded-circle d-flex align-items-center justify-content-center" style="bottom: 20px; right: 20px; width: 60px; height: 60px; z-index: 1040; background: linear-gradient(135deg, #0d9488, #14b8a6); transition: transform 0.3s ease;" onclick="toggleChat()">
+  <i class="bi bi-chat-dots-fill" style="font-size: 1.5rem;"></i>
+</button>
+
+<script>
+  let isChatOpen = false;
+
+  function toggleChat() {
+    const chatWidget = document.getElementById('chat-widget');
+    const chatToggleBtn = document.getElementById('chat-toggle-btn');
+    
+    isChatOpen = !isChatOpen;
+    
+    if (isChatOpen) {
+      chatWidget.style.display = 'flex';
+      // Small timeout to allow display:flex to apply before animation
+      setTimeout(() => {
+        chatWidget.style.transform = 'scale(1)';
+      }, 10);
+      chatToggleBtn.style.transform = 'scale(0)';
+    } else {
+      chatWidget.style.transform = 'scale(0)';
+      setTimeout(() => {
+        chatWidget.style.display = 'none';
+        chatToggleBtn.style.transform = 'scale(1)';
+      }, 300);
+    }
+  }
+
+  function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      sendMessage();
+    }
+  }
+
+  function appendMessage(text, isUser) {
+    const messagesContainer = document.getElementById('chat-messages');
+    
+    const messageWrapper = document.createElement('div');
+    messageWrapper.className = `message mb-3 d-flex ${isUser ? 'justify-content-end' : 'align-items-start'}`;
+    
+    const messageBubble = document.createElement('div');
+    if (isUser) {
+      messageBubble.className = 'p-2 rounded-3 shadow-sm text-white';
+      messageBubble.style.cssText = 'max-width: 85%; font-size: 0.9rem; background-color: #0ea5e9;';
+    } else {
+      messageBubble.className = 'bg-white p-2 rounded-3 shadow-sm';
+      messageBubble.style.cssText = 'max-width: 85%; font-size: 0.9rem; border: 1px solid #e2e8f0; color: #334155;';
+    }
+    
+    messageBubble.innerText = text;
+    messageWrapper.appendChild(messageBubble);
+    messagesContainer.appendChild(messageWrapper);
+    
+    // Scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const inputField = document.getElementById('chat-input');
+    const message = inputField.value.trim();
+    
+    if (!message) return;
+    
+    // Append user message
+    appendMessage(message, true);
+    inputField.value = '';
+    
+    // Send to backend API
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message: message })
+      });
+      
+      const data = await response.json();
+      
+      // Append bot message
+      if (data.reply) {
+        appendMessage(data.reply, false);
+      } else {
+        appendMessage("I'm sorry, I couldn't process that.", false);
+      }
+    } catch (error) {
+      console.error('Error in chat API:', error);
+      appendMessage("Error communicating with server.", false);
+    }
+  }
+</script>

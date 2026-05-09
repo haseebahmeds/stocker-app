@@ -208,4 +208,37 @@
   window.addEventListener('load', navmenuScrollspy);
   document.addEventListener('scroll', navmenuScrollspy);
 
+  /**
+   * Dark Mode Toggle
+   */
+  const themeToggle = document.getElementById('theme-toggle');
+  const body = document.body;
+
+  // Check saved theme
+  const savedTheme = localStorage.getItem('stocker-theme') || 'light';
+  body.setAttribute('data-theme', savedTheme);
+  
+  if (themeToggle) {
+    // Update icon on load
+    updateThemeIcon(savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+      let currentTheme = body.getAttribute('data-theme');
+      let newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      
+      body.setAttribute('data-theme', newTheme);
+      localStorage.setItem('stocker-theme', newTheme);
+      updateThemeIcon(newTheme);
+    });
+  }
+
+  function updateThemeIcon(theme) {
+    if(!themeToggle) return;
+    if (theme === 'dark') {
+      themeToggle.innerHTML = '<i class="bi bi-sun-fill text-warning"></i>';
+    } else {
+      themeToggle.innerHTML = '<i class="bi bi-moon-fill text-dark"></i>';
+    }
+  }
+
 })();

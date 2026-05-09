@@ -31,6 +31,7 @@ USER_TABLE = 'stocker_users'
 STOCK_TABLE = 'stocker_stocks'
 TRANSACTION_TABLE = 'stocker_transactions'
 PORTFOLIO_TABLE = 'stocker_portfolio'
+WATCHLIST_TABLE = 'stocker_watchlist'
 
 # Check if tables exist, if not create them
 existing_tables = dynamodb_client.list_tables()['TableNames']
@@ -86,6 +87,19 @@ create_table_if_not_exists(
 # Create Portfolio Table
 create_table_if_not_exists(
     PORTFOLIO_TABLE,
+    key_schema=[
+        {'AttributeName': 'user_id', 'KeyType': 'HASH'},  # Partition key
+        {'AttributeName': 'stock_id', 'KeyType': 'RANGE'}  # Sort key
+    ],
+    attribute_definitions=[
+        {'AttributeName': 'user_id', 'AttributeType': 'S'},
+        {'AttributeName': 'stock_id', 'AttributeType': 'S'}
+    ]
+)
+
+# Create Watchlist Table
+create_table_if_not_exists(
+    WATCHLIST_TABLE,
     key_schema=[
         {'AttributeName': 'user_id', 'KeyType': 'HASH'},  # Partition key
         {'AttributeName': 'stock_id', 'KeyType': 'RANGE'}  # Sort key

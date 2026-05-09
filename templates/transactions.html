@@ -1,0 +1,101 @@
+<!-- templates/transactions.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Transaction History - Trading Dashboard</title>
+  <link href="{{ url_for('static', filename='img/logo stocker.png') }}" rel="icon" />
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet" />
+</head>
+<body data-theme="light">
+
+<header id="header" class="header d-flex align-items-center fixed-top bg-white border-bottom shadow-sm">
+  <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+    <a href="{{ url_for('index') }}" class="logo d-flex align-items-center me-auto me-lg-0 text-decoration-none">
+      <img src="{{ url_for('static', filename='img/logo stocker.png') }}" alt="">
+      <h1 class="sitename text-primary mb-0">TRADING DASHBOARD<span class="text-success">.</span></h1>
+    </a>
+    <nav id="navmenu" class="navmenu">
+      <ul class="d-flex align-items-center mb-0 list-unstyled gap-3">  
+        <li><a href="{{ url_for('dashboard_trader') }}" class="nav-link fw-semibold text-dark">Dashboard</a></li>
+        <li><a href="{{ url_for('service05') }}" class="nav-link fw-semibold text-dark">Portfolio</a></li>
+        <li><a href="{{ url_for('watchlist') }}" class="nav-link fw-semibold text-dark">Watchlist</a></li>
+        <li><a href="{{ url_for('transactions') }}" class="nav-link active fw-bold text-primary border-bottom border-primary border-2 pb-1">Transactions</a></li>
+        <li>
+          <button id="theme-toggle" class="btn btn-link text-decoration-none p-0 ms-2" style="font-size: 1.2rem;">
+            <i class="bi bi-moon-fill text-dark"></i>
+          </button>
+        </li>
+        <li><a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline-danger rounded-pill px-4 ms-2">Logout</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main style="padding-top: 100px; padding-bottom: 60px; min-height: 100vh; background-color: var(--bs-light);">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1" style="color: #1e293b;">Transaction History</h2>
+            <p class="text-muted mb-0">Review all your past trades and activities.</p>
+        </div>
+        <a href="{{ url_for('export_transactions_pdf') }}" class="btn btn-primary rounded-pill px-4 shadow-sm">
+            <i class="bi bi-file-earmark-pdf-fill me-2"></i>Download PDF
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0" style="border-radius: 12px; overflow: hidden;">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light" style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                    <tr>
+                        <th class="ps-4">Date</th>
+                        <th>Symbol</th>
+                        <th>Action</th>
+                        <th>Quantity</th>
+                        <th>Price/Share</th>
+                        <th class="pe-4 text-end">Total Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for txn in transactions %}
+                    <tr style="transition: background-color 0.2s;">
+                        <td class="ps-4 text-muted small">{{ txn.transaction_date[:10] }} <br><span class="text-secondary" style="font-size:0.75rem;">{{ txn.transaction_date[11:16] }}</span></td>
+                        <td class="fw-bold text-primary">{{ txn.stock.symbol }}</td>
+                        <td>
+                            {% if txn.action == 'buy' %}
+                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1 rounded-pill">BUY</span>
+                            {% else %}
+                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2 py-1 rounded-pill">SELL</span>
+                            {% endif %}
+                        </td>
+                        <td class="fw-medium text-dark">{{ txn.quantity }}</td>
+                        <td class="text-muted">₹{{ txn.price }}</td>
+                        <td class="pe-4 text-end fw-bold" style="color: #334155;">
+                            ₹{{ (txn.quantity * txn.price)|round(2) }}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-receipt fs-1 d-block mb-3 text-secondary opacity-50"></i>
+                            No transactions found. Start trading!
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

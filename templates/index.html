@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stocker - Cloud-Based Stock Trading Platform</title>
+  <title>Trading Dashboard - Cloud-Based Stock Trading Platform</title>
   
   <!-- Favicons -->
   <link href="{{ url_for('static', filename='img/logo stocker.png') }}" rel="icon" />
@@ -27,7 +27,7 @@
     <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
       <a href="{{ url_for('index') }}" class="logo d-flex align-items-center me-auto me-lg-0">
         <img src="{{ url_for('static', filename='img/logo stocker.png') }}" alt="">
-        <h1 class="sitename">STOCKER</h1>
+        <h1 class="sitename">TRADING DASHBOARD</h1>
         <span>.</span>
       </a>
       <nav id="navmenu" class="navmenu">
@@ -38,11 +38,16 @@
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
-      {% if session.get('user') %}
-        <a class="btn-getstarted" href="{{ url_for('logout') }}">Logout</a>
-      {% else %}
-        <a class="btn-getstarted" href="{{ url_for('login') }}">Login/Signup</a>
-      {% endif %}
+      <div class="d-flex align-items-center gap-3">
+        <button id="theme-toggle" class="btn btn-link text-decoration-none p-0" style="font-size: 1.2rem;">
+          <i class="bi bi-moon-fill text-dark"></i>
+        </button>
+        {% if session.get('user') %}
+          <a class="btn-getstarted" href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+          <a class="btn-getstarted" href="{{ url_for('login') }}">Login/Signup</a>
+        {% endif %}
+      </div>
     </div>
   </header>
 
@@ -59,6 +64,47 @@
       </div>
     </section>
 
+    <!-- Market Widgets Section -->
+    <section id="market-widgets" class="py-5" style="background-color: var(--bs-light);">
+      <div class="container" data-aos="fade-up">
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body">
+                <h5 class="fw-bold text-success mb-3"><i class="bi bi-graph-up-arrow me-2"></i>Top Gainers</h5>
+                <ul class="list-unstyled mb-0">
+                  <li class="d-flex justify-content-between mb-2"><span>RELIANCE</span><span class="text-success fw-bold">+2.4%</span></li>
+                  <li class="d-flex justify-content-between mb-2"><span>TCS</span><span class="text-success fw-bold">+1.8%</span></li>
+                  <li class="d-flex justify-content-between"><span>INFY</span><span class="text-success fw-bold">+1.2%</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body">
+                <h5 class="fw-bold text-danger mb-3"><i class="bi bi-graph-down-arrow me-2"></i>Top Losers</h5>
+                <ul class="list-unstyled mb-0">
+                  <li class="d-flex justify-content-between mb-2"><span>HDFCBANK</span><span class="text-danger fw-bold">-1.5%</span></li>
+                  <li class="d-flex justify-content-between mb-2"><span>ITC</span><span class="text-danger fw-bold">-0.9%</span></li>
+                  <li class="d-flex justify-content-between"><span>SBIN</span><span class="text-danger fw-bold">-0.4%</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100 bg-primary text-white" style="background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);">
+              <div class="card-body d-flex flex-column justify-content-center align-items-center text-center">
+                <h4 class="fw-bold mb-2">Market Status</h4>
+                <div class="badge bg-white text-success rounded-pill px-3 py-2 fs-6 mb-3">OPEN</div>
+                <p class="mb-0 text-white-50 small">Trading hours: 9:15 AM - 3:30 PM</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- About Section -->
     <section id="about" class="about section">
       <div class="container" data-aos="fade-up" data-aos-delay="100">
@@ -69,7 +115,7 @@
           <div class="col-lg-6 order-2 order-lg-1 content">
             <h3>Empowering your trades</h3>
             <p class="fst-italic">Experience seamless stock trading</p>
-            <p>Stocker, based in Hyderabad, offers a cloud-native stock trading platform that revolutionizes the way you trade.
+            <p>Trading Dashboard, based in Hyderabad, offers a cloud-native stock trading platform that revolutionizes the way you trade.
               Our service provides real-time stock transactions, portfolio management, and market insights, all designed to 
               empower your trading experience. With a robust backend built on Flask and AWS EC2, along with secure data storage 
               in Amazon DynamoDB, our platform delivers high performance and dynamic scalability. 
@@ -134,7 +180,7 @@
         <div class="row gy-4">
           <div class="col-lg-4 col-md-6 footer-about">
             <a href="index.html" class="logo d-flex align-items-center">
-              <span class="sitename">Stocker</span>
+              <span class="sitename">Trading Dashboard</span>
             </a>
             <div class="footer-contact pt-3">
               <p>Gachibowli</p>
@@ -195,5 +241,6 @@
   <!-- Main JS File -->
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
+  {% include 'chat.html' %}
 </body>
 </html>

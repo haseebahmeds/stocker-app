@@ -4,94 +4,151 @@
 <head>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>Trader Dashboard - Stocker</title>
-
+  <title>Trader Dashboard - Trading Dashboard</title>
   <link href="{{ url_for('static', filename='img/logo stocker.png') }}" rel="icon" />
   <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
   <link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet" />
   <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
+<body data-theme="light" style="background-color: var(--bs-light);">
 
-<header id="header" class="header d-flex align-items-center fixed-top">
+<header id="header" class="header d-flex align-items-center fixed-top bg-white border-bottom shadow-sm">
   <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
-    <a  class="logo d-flex align-items-center me-auto me-lg-0">
+    <a href="{{ url_for('index') }}" class="logo d-flex align-items-center me-auto me-lg-0 text-decoration-none">
       <img src="{{ url_for('static', filename='img/logo stocker.png') }}" alt="">
-      <h1 class="sitename">STOCKER</h1><span>.</span>
+      <h1 class="sitename text-primary mb-0">TRADING DASHBOARD<span class="text-success">.</span></h1>
     </a>
     <nav id="navmenu" class="navmenu">
-      <ul class="d-flex align-items-center mb-0">  
-        <li class="dropdown">
-          <a href="#"><span>Trader Services</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-          <ul>
-            <li><a href="{{ url_for('service04') }}">Buy and Trade Stocks</a></li>
-            <li><a href="{{ url_for('service05') }}">My Portfolio</a></li>
-          </ul>
+      <ul class="d-flex align-items-center mb-0 list-unstyled gap-3">  
+        <li><a href="{{ url_for('dashboard_trader') }}" class="nav-link active fw-bold text-primary border-bottom border-primary border-2 pb-1">Dashboard</a></li>
+        <li><a href="{{ url_for('service05') }}" class="nav-link fw-semibold text-dark">Portfolio</a></li>
+        <li><a href="{{ url_for('watchlist') }}" class="nav-link fw-semibold text-dark">Watchlist</a></li>
+        <li><a href="{{ url_for('transactions') }}" class="nav-link fw-semibold text-dark">Transactions</a></li>
+        <li>
+          <button id="theme-toggle" class="btn btn-link text-decoration-none p-0 ms-2" style="font-size: 1.2rem;">
+            <i class="bi bi-moon-fill text-dark"></i>
+          </button>
         </li>
-        <li><a href="{{ url_for('logout') }}" class="btn btn-danger ms-4 px-4 py-2 rounded">Logout</a></li>
+        <li><a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline-danger rounded-pill px-4 ms-2">Logout</a></li>
       </ul>
       <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
     </nav>
   </div>
 </header>
 
-{% block content %}
-<section id="services" class="services section" style="padding-top: 100px;">
-  <div class="container section-title" data-aos="fade-in">
-    <h1 class="display-4">Welcome, {{ user.username }}!</h1>
-    <p style="color: #000000;">Trader Services</p>
-  </div>
-
+<main style="padding-top: 100px; padding-bottom: 60px;">
   <div class="container">
-    <div class="row gy-4">
-      <div class="col-lg-6 col-md-6" data-aos="fade-up" data-aos-delay="100">
-        <div class="service-item position-relative" style="background-color: rgba(255, 255, 255, 0.5); color: white;">
-          <div class="icon"><i class="bi bi-graph-up-arrow"></i></div>
-          <a class="stretched-link" href="{{ url_for('service04') }}"></a>
-          <h3>Buy and Trade Stocks</h3>
-          <p style="color: #000000">View available stocks and make buy/sell transactions.</p>
+    <div class="d-flex justify-content-between align-items-end mb-4">
+      <div>
+        <h2 class="fw-bold mb-1" style="color: #1e293b;">Welcome back, {{ user.username }}!</h2>
+        <p class="text-muted mb-0">Here is your portfolio summary and market overview.</p>
+      </div>
+    </div>
+
+    <!-- Analytics Cards -->
+    <div class="row g-4 mb-5">
+      <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100 rounded-4">
+          <div class="card-body">
+            <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.8rem;">Total Invested</h6>
+            <h3 class="fw-bold text-dark mb-0">₹{{ "%.2f"|format(total_invested) }}</h3>
+          </div>
         </div>
       </div>
-
-      <div class="col-lg-6 col-md-6" data-aos="fade-up" data-aos-delay="200">
-        <div class="service-item position-relative" style="background-color: rgba(255, 255, 255, 0.5); color: white;">
-          <div class="icon"><i class="bi bi-briefcase"></i></div>
-          <a class="stretched-link" href="{{ url_for('service05') }}"></a>
-          <h3>My Portfolio</h3>
-          <p style="color: #000000">View your current stock holdings and transaction history.</p>
+      <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100 rounded-4">
+          <div class="card-body">
+            <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.8rem;">Current Value</h6>
+            <h3 class="fw-bold text-dark mb-0">₹{{ "%.2f"|format(current_value) }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100 rounded-4">
+          <div class="card-body">
+            <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.8rem;">Total Profit / Loss</h6>
+            <h3 class="fw-bold mb-0 {% if profit_loss >= 0 %}text-success{% else %}text-danger{% endif %}">
+              {% if profit_loss >= 0 %}+{% endif %}₹{{ "%.2f"|format(profit_loss) }}
+            </h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100 rounded-4">
+          <div class="card-body">
+            <h6 class="text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.8rem;">Gain / Loss %</h6>
+            <h3 class="fw-bold mb-0 {% if pl_percent >= 0 %}text-success{% else %}text-danger{% endif %}">
+              {% if pl_percent >= 0 %}+{% endif %}{{ "%.2f"|format(pl_percent) }}%
+            </h3>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  
-  <div class="container mt-5">
+
+    <!-- Charts Row -->
+    <div class="row mb-5">
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <div class="card shadow-sm border-0 rounded-4 h-100">
+          <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+            <h5 class="fw-bold" style="color: #1e293b;">Sector Allocation</h5>
+          </div>
+          <div class="card-body d-flex justify-content-center align-items-center" style="min-height: 300px;">
+            <canvas id="sectorChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card shadow-sm border-0 rounded-4 h-100" style="background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);">
+          <div class="card-body p-5 d-flex flex-column justify-content-center align-items-start">
+            <h3 class="fw-bold" style="color: #0f766e;">Explore the Market</h3>
+            <p style="color: #115e59; font-size: 1.1rem;">Discover new opportunities, track live prices, and execute trades instantly with our powerful tools.</p>
+            <a href="{{ url_for('service04') }}" class="btn btn-primary rounded-pill px-4 shadow-sm mt-3 border-0" style="background-color: #0d9488;">Trade Now</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Market Overview Table -->
     <div class="row">
         <div class="col-12">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Market Overview</h5>
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <h5 class="mb-0 fw-bold" style="color: #1e293b;"><i class="bi bi-bar-chart-fill me-2 text-primary"></i>Market Overview</h5>
+                    <div class="d-flex gap-2">
+                        <input type="text" id="marketSearch" class="form-control form-control-sm rounded-pill px-3" placeholder="Search stocks..." style="max-width: 200px;">
+                        <select id="sectorFilter" class="form-select form-select-sm rounded-pill px-3" style="max-width: 150px;">
+                            <option value="">All Sectors</option>
+                            <option value="IT">IT</option>
+                            <option value="Financials">Financials</option>
+                            <option value="Energy">Energy</option>
+                            <option value="Consumer Goods">Consumer Goods</option>
+                            <option value="Healthcare">Healthcare</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="thead-light">
+                        <table class="table table-hover align-middle mb-0" id="marketTable">
+                            <thead class="table-light" style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">
                                 <tr>
-                                    <th>Symbol</th>
+                                    <th class="ps-4">Symbol</th>
                                     <th>Name</th>
-                                    <th>Price</th>
+                                    <th>Live Price</th>
                                     <th>Sector</th>
-                                    <th>Actions</th>
+                                    <th class="text-end pe-4">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for stock in market_data %}
-                                <tr>
-                                    <td>{{ stock.symbol }}</td>
-                                    <td>{{ stock.name }}</td>
-                                    <td>₹{{ stock.price }}</td>
-                                    <td>{{ stock.sector }}</td>
-                                    <td>
-                                        <a href="{{ url_for('buy_stock', stock_id=stock.id) }}" class="btn btn-sm btn-success">Buy</a>
+                                <tr style="transition: background-color 0.2s;" data-stock-symbol="{{ stock.symbol }}">
+                                    <td class="ps-4 fw-semibold text-primary">{{ stock.symbol }}</td>
+                                    <td class="fw-medium stock-name" style="color: #334155;">{{ stock.name }}</td>
+                                    <td class="fw-bold price-cell" style="color: #0f766e;">₹{{ stock.price }}</td>
+                                    <td><span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 px-2 py-1 rounded-pill sector-badge">{{ stock.sector }}</span></td>
+                                    <td class="text-end pe-4">
+                                        <button onclick="addToWatchlist('{{ stock.id }}')" class="btn btn-sm btn-outline-primary rounded-pill px-3 me-1 shadow-sm" title="Add to Watchlist"><i class="bi bi-eye"></i></button>
+                                        <a href="{{ url_for('buy_stock', stock_id=stock.id) }}" class="btn btn-sm btn-success rounded-pill px-3 shadow-sm">Buy</a>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -102,9 +159,106 @@
             </div>
         </div>
     </div>
-</div>
-</section>
-{% endblock %}
+  </div>
+</main>
 
+<script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script>
+    // Search and Filter Logic
+    document.getElementById('marketSearch').addEventListener('keyup', filterTable);
+    document.getElementById('sectorFilter').addEventListener('change', filterTable);
+
+    function filterTable() {
+        let searchQuery = document.getElementById('marketSearch').value.toLowerCase();
+        let sectorQuery = document.getElementById('sectorFilter').value.toLowerCase();
+        let rows = document.querySelectorAll('#marketTable tbody tr');
+
+        rows.forEach(row => {
+            let symbol = row.querySelector('.text-primary').innerText.toLowerCase();
+            let name = row.querySelector('.stock-name').innerText.toLowerCase();
+            let sector = row.querySelector('.sector-badge').innerText.toLowerCase();
+            
+            let matchesSearch = symbol.includes(searchQuery) || name.includes(searchQuery);
+            let matchesSector = sectorQuery === "" || sector.includes(sectorQuery);
+
+            if (matchesSearch && matchesSector) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    // Chart.js Sector Allocation
+    const sectorData = {{ sector_allocations|safe }};
+    if (Object.keys(sectorData).length > 0) {
+        const ctx = document.getElementById('sectorChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(sectorData),
+                datasets: [{
+                    data: Object.values(sectorData),
+                    backgroundColor: [
+                        '#0d9488', '#0284c7', '#7c3aed', '#ea580c', '#e11d48', '#65a30d', '#0891b2'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right' }
+                },
+                cutout: '70%'
+            }
+        });
+    } else {
+        document.getElementById('sectorChart').parentElement.innerHTML = '<p class="text-muted">No portfolio data yet.</p>';
+    }
+
+    // Add to Watchlist API
+    async function addToWatchlist(stockId) {
+        try {
+            const res = await fetch('/api/watchlist/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ stock_id: stockId })
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert('Added to Watchlist!');
+            } else {
+                alert('Failed to add.');
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    // Optional: Fetch live prices for market overview periodically
+    async function fetchMarketPrices() {
+        const rows = document.querySelectorAll('#marketTable tbody tr');
+        // Limit to first 5 rows to avoid heavy API usage in free tier
+        for (let i = 0; i < Math.min(rows.length, 5); i++) {
+            let row = rows[i];
+            let symbol = row.getAttribute('data-stock-symbol');
+            let priceCell = row.querySelector('.price-cell');
+            try {
+                let res = await fetch(`/api/stock/price/${symbol}`);
+                let data = await res.json();
+                if (data.current_price) {
+                    let color = data.trend === 'up' ? 'text-success' : (data.trend === 'down' ? 'text-danger' : 'text-dark');
+                    let icon = data.trend === 'up' ? '<i class="bi bi-arrow-up-short"></i>' : (data.trend === 'down' ? '<i class="bi bi-arrow-down-short"></i>' : '');
+                    priceCell.innerHTML = `<span class="${color}">₹${data.current_price.toFixed(2)} ${icon}</span>`;
+                }
+            } catch (e) {}
+        }
+    }
+
+    // Call once after 2 seconds
+    setTimeout(fetchMarketPrices, 2000);
+</script>
 </body>
 </html>

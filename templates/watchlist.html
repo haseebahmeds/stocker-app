@@ -1,0 +1,147 @@
+<!-- templates/watchlist.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>My Watchlist - Trading Dashboard</title>
+  <link href="{{ url_for('static', filename='img/logo stocker.png') }}" rel="icon" />
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet" />
+</head>
+<body data-theme="light">
+
+<header id="header" class="header d-flex align-items-center fixed-top bg-white border-bottom shadow-sm">
+  <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+    <a href="{{ url_for('index') }}" class="logo d-flex align-items-center me-auto me-lg-0 text-decoration-none">
+      <img src="{{ url_for('static', filename='img/logo stocker.png') }}" alt="">
+      <h1 class="sitename text-primary mb-0">TRADING DASHBOARD<span class="text-success">.</span></h1>
+    </a>
+    <nav id="navmenu" class="navmenu">
+      <ul class="d-flex align-items-center mb-0 list-unstyled gap-3">  
+        <li><a href="{{ url_for('dashboard_trader') }}" class="nav-link fw-semibold text-dark">Dashboard</a></li>
+        <li><a href="{{ url_for('service05') }}" class="nav-link fw-semibold text-dark">Portfolio</a></li>
+        <li><a href="{{ url_for('watchlist') }}" class="nav-link active fw-bold text-primary border-bottom border-primary border-2 pb-1">Watchlist</a></li>
+        <li><a href="{{ url_for('transactions') }}" class="nav-link fw-semibold text-dark">Transactions</a></li>
+        <li>
+          <button id="theme-toggle" class="btn btn-link text-decoration-none p-0 ms-2" style="font-size: 1.2rem;">
+            <i class="bi bi-moon-fill text-dark"></i>
+          </button>
+        </li>
+        <li><a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline-danger rounded-pill px-4 ms-2">Logout</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main style="padding-top: 100px; padding-bottom: 60px; min-height: 100vh; background-color: var(--bs-light);">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1" style="color: #1e293b;">My Watchlist</h2>
+            <p class="text-muted mb-0">Track your favorite stocks closely.</p>
+        </div>
+        <a href="{{ url_for('dashboard_trader') }}" class="btn btn-primary rounded-pill px-4 shadow-sm">
+            <i class="bi bi-plus-circle me-2"></i>Add Stocks
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0" style="border-radius: 12px; overflow: hidden;">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="watchlistTable">
+                <thead class="table-light" style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                    <tr>
+                        <th class="ps-4">Symbol</th>
+                        <th>Name</th>
+                        <th>Live Price</th>
+                        <th>Sector</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for w in watchlist %}
+                    <tr style="transition: background-color 0.2s;" data-stock-id="{{ w.stock.id }}">
+                        <td class="ps-4 fw-bold text-primary">{{ w.stock.symbol }}</td>
+                        <td class="fw-medium text-dark">{{ w.stock.name }}</td>
+                        <td class="fw-bold" style="color: #0f766e;" id="price-{{ w.stock.symbol }}">
+                            <span class="spinner-border spinner-border-sm text-secondary" role="status" aria-hidden="true"></span>
+                        </td>
+                        <td><span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 px-2 py-1 rounded-pill">{{ w.stock.sector }}</span></td>
+                        <td class="text-end pe-4">
+                            <a href="{{ url_for('buy_stock', stock_id=w.stock.id) }}" class="btn btn-sm btn-success rounded-pill px-3 me-2 shadow-sm">Buy</a>
+                            <button onclick="removeFromWatchlist('{{ w.stock.id }}')" class="btn btn-sm btn-outline-danger rounded-pill px-3 shadow-sm">
+                                <i class="bi bi-trash-fill"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="bi bi-eye-slash fs-1 d-block mb-3 text-secondary opacity-50"></i>
+                            Your watchlist is empty. Go to the Dashboard to add some stocks!
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+    async function removeFromWatchlist(stockId) {
+        if (!confirm('Remove this stock from your watchlist?')) return;
+        
+        try {
+            const response = await fetch('/api/watchlist/remove', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ stock_id: stockId })
+            });
+            const data = await response.json();
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error removing from watchlist');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to process request');
+        }
+    }
+
+    // Fetch Live Prices for Watchlist
+    async function fetchLivePrices() {
+        const rows = document.querySelectorAll('tr[data-stock-id]');
+        for (const row of rows) {
+            const symbolCell = row.querySelector('.text-primary');
+            if (symbolCell) {
+                const symbol = symbolCell.innerText;
+                const priceCell = document.getElementById(`price-${symbol}`);
+                try {
+                    const res = await fetch(`/api/stock/price/${symbol}`);
+                    const data = await res.json();
+                    if (data.current_price) {
+                        let color = data.trend === 'up' ? 'text-success' : (data.trend === 'down' ? 'text-danger' : 'text-dark');
+                        let icon = data.trend === 'up' ? '<i class="bi bi-arrow-up-right"></i>' : (data.trend === 'down' ? '<i class="bi bi-arrow-down-right"></i>' : '');
+                        priceCell.innerHTML = `<span class="${color} fw-bold">₹${data.current_price.toFixed(2)} ${icon} <small class="fw-normal">(${data.change_percent.toFixed(2)}%)</small></span>`;
+                    } else {
+                        priceCell.innerText = 'Failed to load';
+                    }
+                } catch (e) {
+                    priceCell.innerText = 'Error';
+                }
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchLivePrices);
+</script>
+</body>
+</html>

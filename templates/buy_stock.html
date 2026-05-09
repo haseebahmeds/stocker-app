@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>Our Services - Stocker</title>
+  <title>Our Services - Trading Dashboard</title>
 
   <!-- Favicons -->
   <link href="{{ url_for('static', filename='img/logo stocker.png') }}" rel="icon" />
@@ -22,7 +22,7 @@
 
       <a class="logo d-flex align-items-center me-auto me-lg-0">
         <img src="{{ url_for('static', filename='img/logo stocker.png') }}" alt="">
-        <h1 class="sitename">STOCKER</h1>
+        <h1 class="sitename">TRADING DASHBOARD</h1>
         <span>.</span>
       </a>
 
@@ -66,9 +66,9 @@
                             </div>
                         </div>
                         
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-success">Confirm Purchase</button>
+                        <div class="d-flex justify-content-end gap-2 mt-4">
                             <a href="{{ url_for('service04') }}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-success">Confirm Purchase</button>
                         </div>
                     </form>
                 </div>

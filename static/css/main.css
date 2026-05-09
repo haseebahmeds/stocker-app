@@ -27,6 +27,63 @@
   --contrast-color: #312f2f; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
 }
 
+/* Dark Theme Variables */
+[data-theme='dark'] {
+  --background-color: #0f172a;
+  --default-color: #cbd5e1;
+  --heading-color: #f8fafc;
+  --surface-color: #1e293b;
+  --bs-light: #0f172a;
+  --bs-body-bg: #0f172a;
+  --bs-body-color: #cbd5e1;
+}
+
+[data-theme='dark'] .bg-white {
+  background-color: #1e293b !important;
+}
+
+[data-theme='dark'] .text-dark {
+  color: #f8fafc !important;
+}
+
+[data-theme='dark'] .card {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
+[data-theme='dark'] .table {
+  color: #cbd5e1;
+}
+
+[data-theme='dark'] .table-light {
+  background-color: #334155 !important;
+  color: #f8fafc;
+}
+
+[data-theme='dark'] .table-hover>tbody>tr:hover>* {
+  background-color: #334155;
+  color: #f8fafc;
+}
+
+[data-theme='dark'] .text-muted {
+  color: #94a3b8 !important;
+}
+
+[data-theme='dark'] h1, [data-theme='dark'] h2, [data-theme='dark'] h3, [data-theme='dark'] h4, [data-theme='dark'] h5, [data-theme='dark'] h6 {
+  color: #f8fafc !important;
+}
+
+[data-theme='dark'] .form-control, [data-theme='dark'] .form-select {
+  background-color: #334155;
+  border-color: #475569;
+  color: #f8fafc;
+}
+
+[data-theme='dark'] .form-control:focus, [data-theme='dark'] .form-select:focus {
+  background-color: #334155;
+  color: #f8fafc;
+}
+
 /* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
 :root {
   --nav-color: rgba(255, 255, 255, 0.905);  /* The default color of the main navmenu links */
@@ -1708,4 +1765,73 @@ section,
   font-size: 20px;
   margin-right: 8px;
   color: var(--accent-color);
+}
+
+/*--------------------------------------------------------------
+# Premium Button Designs
+--------------------------------------------------------------*/
+.btn {
+  border: none !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 10px 24px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
+  transform: translateX(-100%);
+  transition: 0.5s;
+  z-index: -1;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+}
+
+.btn:hover::before {
+  transform: translateX(100%);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: #ffffff !important;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  color: #ffffff !important;
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
+  color: #ffffff !important;
+}
+
+.btn-info {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+  color: #ffffff !important;
+}
+
+.btn-sm {
+  padding: 6px 16px !important;
+  font-size: 0.875rem !important;
+  border-radius: 6px !important;
 }

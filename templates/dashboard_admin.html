@@ -4,74 +4,116 @@
 <head>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>Admin Dashboard - Stocker</title>
-
+  <title>Admin Dashboard - Trading Dashboard</title>
   <link href="{{ url_for('static', filename='img/logo stocker.png') }}" rel="icon" />
   <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
   <link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet" />
   <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet" />
 </head>
-<body>
+<body data-theme="light" style="background-color: var(--bs-light);">
 
-<header id="header" class="header d-flex align-items-center fixed-top">
+<header id="header" class="header d-flex align-items-center fixed-top bg-white border-bottom shadow-sm">
   <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
-    <a class="logo d-flex align-items-center me-auto me-lg-0">
+    <a href="#" class="logo d-flex align-items-center me-auto me-lg-0 text-decoration-none">
       <img src="{{ url_for('static', filename='img/logo stocker.png') }}" alt="">
-      <h1 class="sitename">STOCKER</h1><span style="color: #3fb61a">.</span>
+      <h1 class="sitename text-primary mb-0">TRADING DASHBOARD<span class="text-success">.</span></h1>
+      <span class="badge bg-danger ms-2 rounded-pill">ADMIN</span>
     </a>
     <nav id="navmenu" class="navmenu">
-      <ul class="d-flex align-items-center mb-0">  
-        <li class="dropdown">
-          <a href="#"><span>Admin Services</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-          <ul>
-            <li><a href="{{ url_for('service01') }}">View Traders</a></li>
-            <li><a href="{{ url_for('service02') }}">View Transactions</a></li>
-            <li><a href="{{ url_for('service03') }}">View Portfolios</a></li>
-          </ul>
-        </li>
-        <li><a href="{{ url_for('logout') }}" class="btn btn-danger ms-4 px-4 py-2 rounded">Logout</a></li>
+      <ul class="d-flex align-items-center mb-0 list-unstyled gap-3">  
+        <li><a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline-danger rounded-pill px-4 ms-2">Logout</a></li>
       </ul>
       <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
     </nav>
   </div>
 </header>
 
-<section id="services" class="services section" style="padding-top: 100px;">
-  <div class="container section-title" data-aos="fade-in">
-    <p style="color: #000000;">Admin Services</p>
-  </div>
-
+<main style="padding-top: 100px; padding-bottom: 60px;">
   <div class="container">
-    <div class="row gy-4">
-      <div class="col-lg-4 col-md-4" data-aos="fade-up" data-aos-delay="100">
-        <div class="service-item position-relative" style="background-color: rgba(255, 255, 255, 0.5); color: white;">
-          <div class="icon"><i class="bi bi-people"></i></div>
-          <a class="stretched-link" href="{{ url_for('service01') }}"></a>
-          <h3>View Traders</h3>
-          <p style="color: #000000">Manage all registered traders in the platform.</p>
+    <div class="d-flex justify-content-between align-items-end mb-4">
+      <div>
+        <h2 class="fw-bold mb-1" style="color: #1e293b;">Admin Dashboard</h2>
+        <p class="text-muted mb-0">Platform Overview & Statistics</p>
+      </div>
+    </div>
+
+    <!-- Analytics Cards -->
+    <div class="row g-4 mb-5">
+      <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100 rounded-4" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-left: 4px solid #3b82f6 !important;">
+          <div class="card-body">
+            <h6 class="text-primary text-uppercase fw-semibold mb-2" style="font-size: 0.8rem;">Total Users</h6>
+            <h3 class="fw-bold text-dark mb-0">{{ total_users }} <small class="text-muted fs-6">({{ traders_count }} Traders)</small></h3>
+          </div>
         </div>
       </div>
-
-      <div class="col-lg-4 col-md-4" data-aos="fade-up" data-aos-delay="200">
-        <div class="service-item position-relative" style="background-color: rgba(255, 255, 255, 0.5); color: white;">
-          <div class="icon"><i class="bi bi-file-earmark-text"></i></div>
-          <a class="stretched-link" href="{{ url_for('service02') }}"></a>
-          <h3>View Transactions</h3>
-          <p style="color: #000000">Monitor all trade transactions on the platform.</p>
+      <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100 rounded-4" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-left: 4px solid #22c55e !important;">
+          <div class="card-body">
+            <h6 class="text-success text-uppercase fw-semibold mb-2" style="font-size: 0.8rem;">Total Transactions</h6>
+            <h3 class="fw-bold text-dark mb-0">{{ total_transactions }}</h3>
+          </div>
         </div>
       </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100 rounded-4" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border-left: 4px solid #f59e0b !important;">
+          <div class="card-body">
+            <h6 class="text-warning text-uppercase fw-semibold mb-2" style="font-size: 0.8rem;">Total Volume</h6>
+            <h3 class="fw-bold text-dark mb-0">₹{{ "%.2f"|format(total_volume) }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100 rounded-4" style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); border-left: 4px solid #a855f7 !important;">
+          <div class="card-body">
+            <h6 class="text-purple text-uppercase fw-semibold mb-2" style="font-size: 0.8rem; color: #a855f7;">Active Stocks</h6>
+            <h3 class="fw-bold text-dark mb-0">{{ market_data|length }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
 
-      <div class="col-lg-4 col-md-4" data-aos="fade-up" data-aos-delay="300">
-        <div class="service-item position-relative" style="background-color: rgba(255, 255, 255, 0.5); color: white;">
-          <div class="icon"><i class="bi bi-briefcase"></i></div>
-          <a class="stretched-link" href="{{ url_for('service03') }}"></a>
-          <h3>View Portfolios</h3>
-          <p style="color: #000000">Monitor all trader's portfolios on the platform.</p>
+    <!-- Management Services -->
+    <h5 class="fw-bold mb-3" style="color: #1e293b;">Management Tools</h5>
+    <div class="row g-4 mb-5">
+      <div class="col-lg-4 col-md-4">
+        <div class="card shadow-sm border-0 h-100 rounded-4 p-3 transition-hover">
+          <div class="card-body d-flex flex-column justify-content-center align-items-start">
+            <div class="icon mb-3 bg-primary bg-opacity-10 p-3 rounded-circle" style="color: #0d6efd;"><i class="bi bi-people fs-3"></i></div>
+            <a class="stretched-link" href="{{ url_for('service01') }}"></a>
+            <h4 class="fw-bold" style="color: #1e293b;">View Traders</h4>
+            <p class="text-muted mb-0">Manage all registered traders in the platform.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-4">
+        <div class="card shadow-sm border-0 h-100 rounded-4 p-3 transition-hover">
+          <div class="card-body d-flex flex-column justify-content-center align-items-start">
+            <div class="icon mb-3 bg-success bg-opacity-10 p-3 rounded-circle" style="color: #198754;"><i class="bi bi-file-earmark-text fs-3"></i></div>
+            <a class="stretched-link" href="{{ url_for('service02') }}"></a>
+            <h4 class="fw-bold" style="color: #1e293b;">View Transactions</h4>
+            <p class="text-muted mb-0">Monitor all trade transactions across the platform.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-4">
+        <div class="card shadow-sm border-0 h-100 rounded-4 p-3 transition-hover">
+          <div class="card-body d-flex flex-column justify-content-center align-items-start">
+            <div class="icon mb-3 bg-warning bg-opacity-10 p-3 rounded-circle" style="color: #ffc107;"><i class="bi bi-briefcase fs-3"></i></div>
+            <a class="stretched-link" href="{{ url_for('service03') }}"></a>
+            <h4 class="fw-bold" style="color: #1e293b;">View Portfolios</h4>
+            <p class="text-muted mb-0">Analyze all trader portfolios and holdings.</p>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</section>
+</main>
 
+<script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<style>
+.transition-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.transition-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
+</style>
 </body>
 </html>
